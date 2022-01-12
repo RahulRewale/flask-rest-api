@@ -15,9 +15,11 @@ app = Flask(__name__)
 # since SQLAlchemy 1.4, only postgresql works
 # since Heroku's cold doesn't reflect this change yet, and it generates the database url for us, 
 # which we cannot update, we need to handle this url issue in code as below
-database_uri = os.getenv("DATABASE_URL", "sqlite:///data.db")
+database_uri = os.environ.get("DATABASE_URL", "sqlite:///data.db")	
+# os.environ.get() and os.getenv() are same
 if database_uri.startswith("postgres://"):
 	database_uri = database_uri.replace("postgres://", "postgresql://", 1)
+
 app.config["SQLALCHEMY_DATABASE_URI"] = database_uri
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = 'jeet'
