@@ -84,6 +84,15 @@ api.add_resource(UserRegister, '/register')
 api.add_resource(Store, '/store/<string:name>')
 api.add_resource(StoreList, '/stores')
 
-if __name__ == '__main__':
-	# db.init_app(app)	# fails on heroku since we run app.py through uwsgi, so need to move outside __main__
+# this below "__main__" code will not be executed on Heroku since we call uwsgi which internal executes our app
+# on heroku, code in run.py file will be executed; to do this, in uwsgi.ini file we need to change module
+if __name__ == '__main__': 
+	from db import db
+    db.init_app(app)
+
+    if app.config['DEBUG']:
+        @app.before_first_request
+        def create_tables():
+            db.create_all()
+	
 	app.run(port=5000, debug=True)
